@@ -4,15 +4,15 @@ vars:
 
   component: "%{hiera('component')}"
   deployment_identifier: "%{hiera('specific_deployment_identifier')}"
-  service_name: "nxt"
+  service_name: "ardor"
 
-  version_number: "%{hiera('version_number')}"
+  version_number: "%{hiera('ardor_node_version_number')}"
 
   admin_password: "%{hiera('admin_password')}"
   key_store_password: "%{hiera('key_store_password')}"
 
-  peer_server_port: 7874
-  api_server_port: 443
+  peer_server_port: 26874
+  api_server_port: 26877
 
   initial_blockchain_archive_path: "s3://%{hiera('blockchain_archive_bucket_name')}/%{hiera('blockchain_archive_key')}"
 
@@ -31,11 +31,11 @@ vars:
   cluster_state_bucket_name: "%{hiera('cluster_state_bucket_name')}"
   cluster_state_key: "%{hiera('cluster_state_key')}"
 
-  image_repository_state_bucket_name: "%{hiera('nxt_image_repository_state_bucket_name')}"
-  image_repository_state_key: "%{hiera('nxt_image_repository_state_key')}"
+  image_repository_state_bucket_name: "%{hiera('ardor_image_repository_state_bucket_name')}"
+  image_repository_state_key: "%{hiera('ardor_image_repository_state_key')}"
 
 backend_config:
-  bucket: "%{hiera('nxt_service_state_bucket_name')}"
-  key: "%{hiera('nxt_service_state_key')}"
+  bucket: "%{hiera('ardor_service_state_bucket_name')}"
+  key: "%{hiera('ardor_service_state_key')}"
   region: "%{hiera('region')}"
   encrypt: "true"

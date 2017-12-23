@@ -21,12 +21,12 @@
     ],
     "mountPoints": [
       {
-        "sourceVolume": "nxt-data",
-        "containerPath": "/opt/nxt/nxt_db"
+        "sourceVolume": "ardor-data",
+        "containerPath": "/opt/ardor/nxt_db"
       },
       {
-        "sourceVolume": "nxt-certs",
-        "containerPath": "/opt/nxt/nxt_certs"
+        "sourceVolume": "ardor-certs",
+        "containerPath": "/opt/ardor/nxt_certs"
       }
     ],
     "logConfiguration": {

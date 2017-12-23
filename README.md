@@ -1,7 +1,7 @@
-AWS NXT Node
+AWS Ardor Node
 ===============
 
-An NXT node on AWS.
+An Ardor node on AWS.
 
 Development
 -----------

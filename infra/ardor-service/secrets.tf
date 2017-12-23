@@ -1,5 +1,5 @@
 data "template_file" "address" {
-  template = "nxt-node-$${deployment_identifier}.$${domain_name}"
+  template = "ardor-node-$${deployment_identifier}.$${domain_name}"
 
   vars {
     deployment_identifier = "${var.deployment_identifier}"
@@ -8,7 +8,7 @@ data "template_file" "address" {
 }
 
 data "template_file" "env" {
-  template = "${file("${path.root}/envfiles/nxt.env.tpl")}"
+  template = "${file("${path.root}/envfiles/ardor.env.tpl")}"
 
   vars {
     initial_blockchain_archive_path = "${var.initial_blockchain_archive_path}"

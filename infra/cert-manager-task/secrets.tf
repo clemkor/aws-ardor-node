@@ -1,5 +1,5 @@
 data "template_file" "domain" {
-  template = "nxt-node-$${deployment_identifier}.$${domain_name}"
+  template = "ardor-node-$${deployment_identifier}.$${domain_name}"
 
   vars {
     deployment_identifier = "${var.deployment_identifier}"

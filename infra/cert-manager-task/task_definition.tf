@@ -27,8 +27,8 @@ resource "aws_ecs_task_definition" "cert_manager" {
   task_role_arn = "${aws_iam_role.task_role.arn}"
 
   volume {
-    name = "nxt-certs"
-    host_path = "/opt/nxt/nxt_certs"
+    name = "ardor-certs"
+    host_path = "/opt/ardor/nxt_certs"
   }
 
   placement_constraints {

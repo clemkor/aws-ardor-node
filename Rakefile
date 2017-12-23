@@ -27,9 +27,8 @@ version = S3VersionFile.new(
 task :default => [
     :'bootstrap:plan',
     :'blockchain_archive_lambda:plan',
-    :'nxt:image_repository:plan',
-    :'cert_manager:image_repository:plan',
-    :'nxt:service:plan',
+    :'ardor:image_repository:plan',
+    :'ardor:service:plan',
     :'cert_manager:task:plan'
 ]
 
@@ -176,10 +175,10 @@ namespace :blockchain_archive_lambda do
   end
 end
 
-namespace :nxt do
+namespace :ardor do
   namespace :image_repository do
     RakeTerraform.define_command_tasks do |t|
-      t.configuration_name = 'NXT image repository'
+      t.configuration_name = 'Ardor image repository'
       t.source_directory = 'infra/image-repository'
       t.work_directory = 'build'
 
@@ -188,7 +187,7 @@ namespace :nxt do
             .for_overrides(
                 shared_deployment_identifier: 'default')
             .for_scope(
-                role: 'nxt-image-repository',
+                role: 'ardor-image-repository',
                 deployment: 'default')
             .backend_config
       end
@@ -198,7 +197,7 @@ namespace :nxt do
             .for_overrides(
                 shared_deployment_identifier: 'default')
             .for_scope(
-                role: 'nxt-image-repository',
+                role: 'ardor-image-repository',
                 deployment: 'default')
             .vars
       end
@@ -207,25 +206,25 @@ namespace :nxt do
 
   namespace :image do
     RakeDocker.define_image_tasks do |t|
-      t.image_name = 'aws-nxt'
+      t.image_name = 'aws-ardor'
       t.work_directory = 'build/images'
 
       t.copy_spec = [
-          {from: 'src/nxt/Dockerfile', to: 'Dockerfile'},
-          {from: 'src/nxt/nxt.sh', to: 'nxt.sh'},
-          {from: 'src/nxt/nxt.properties.template',
-           to: 'nxt.properties.template'},
-          {from: 'src/nxt/nxt-default.env', to: 'nxt-default.env'}
+          {from: 'src/ardor/Dockerfile', to: 'Dockerfile'},
+          {from: 'src/ardor/ardor.sh', to: 'ardor.sh'},
+          {from: 'src/ardor/ardor.properties.template',
+           to: 'ardor.properties.template'},
+          {from: 'src/ardor/ardor-default.env', to: 'ardor-default.env'}
       ]
 
-      t.repository_name = 'eth-quest/aws-nxt'
+      t.repository_name = 'eth-quest/aws-ardor'
       t.repository_url = lambda do
         backend_config =
             configuration
                 .for_overrides(
                     shared_deployment_identifier: 'default')
                 .for_scope(
-                    role: 'nxt-image-repository',
+                    role: 'ardor-image-repository',
                     deployment: 'default')
                 .backend_config
 
@@ -242,7 +241,7 @@ namespace :nxt do
                 .for_overrides(
                     shared_deployment_identifier: 'default')
                 .for_scope(
-                    role: 'nxt-image-repository',
+                    role: 'ardor-image-repository',
                     deployment: 'default')
 
         backend_config = configuration.backend_config
@@ -266,10 +265,11 @@ namespace :nxt do
     end
 
     task :publish => [
-        'nxt:image:clean',
-        'nxt:image:build',
-        'nxt:image:tag',
-        'nxt:image:push'
+        'version:bump',
+        'ardor:image:clean',
+        'ardor:image:build',
+        'ardor:image:tag',
+        'ardor:image:push'
     ]
   end
 
@@ -281,8 +281,8 @@ namespace :nxt do
           :environment_deployment_identifier
       ]
 
-      t.configuration_name = 'NXT service'
-      t.source_directory = 'infra/nxt-service'
+      t.configuration_name = 'Ardor service'
+      t.source_directory = 'infra/ardor-service'
       t.work_directory = 'build'
 
       t.backend_config = lambda do |args|
@@ -294,7 +294,7 @@ namespace :nxt do
         configuration
             .for_overrides(args)
             .for_scope(
-                role: 'nxt-service',
+                role: 'ardor-service',
                 deployment: deployment_identifier)
             .backend_config
       end
@@ -303,19 +303,19 @@ namespace :nxt do
         deployment =
             configuration
                 .for_overrides(args)
-                .for_scope(role: 'nxt-service')
+                .for_scope(role: 'ardor-service')
                 .specific_deployment_identifier
 
-        nxt_node_config = YAML.load_file(
-            'config/secrets/nxt/%s.yaml' % deployment)
+        ardor_node_config = YAML.load_file(
+            'config/secrets/ardor/%s.yaml' % deployment)
 
         configuration
             .for_overrides(args.to_hash.merge(
-                'version_number' => version.refresh.to_s,
-                'admin_password' => nxt_node_config['admin_password'],
-                'key_store_password' => nxt_node_config['key_store_password']))
+                'ardor_node_version_number' => version.refresh.to_s,
+                'admin_password' => ardor_node_config['admin_password'],
+                'key_store_password' => ardor_node_config['key_store_password']))
             .for_scope(
-                role: 'nxt-service',
+                role: 'ardor-service',
                 deployment: deployment)
             .vars
       end
@@ -324,97 +324,6 @@ namespace :nxt do
 end
 
 namespace :cert_manager do
-  namespace :image_repository do
-    RakeTerraform.define_command_tasks do |t|
-      t.configuration_name = 'cert manager image repository'
-      t.source_directory = 'infra/image-repository'
-      t.work_directory = 'build'
-
-      t.backend_config = lambda do
-        configuration
-            .for_overrides(
-                shared_deployment_identifier: 'default')
-            .for_scope(
-                role: 'cert-manager-image-repository',
-                deployment: 'default')
-            .backend_config
-      end
-
-      t.vars = lambda do
-        configuration
-            .for_overrides(
-                shared_deployment_identifier: 'default')
-            .for_scope(
-                role: 'cert-manager-image-repository',
-                deployment: 'default')
-            .vars
-      end
-    end
-  end
-
-  namespace :image do
-    RakeDocker.define_image_tasks do |t|
-      t.image_name = 'aws-cert-manager'
-      t.work_directory = 'build/images'
-
-      t.copy_spec = t.copy_spec = ['src/cert-manager/.']
-
-      t.repository_name = 'eth-quest/aws-cert-manager'
-      t.repository_url = lambda do
-        configuration =
-            configuration
-                .for_overrides(
-                    shared_deployment_identifier: 'default')
-                .for_scope(
-                    role: 'cert-manager-image-repository',
-                    deployment: 'default')
-
-        backend_config = configuration.backend_config
-
-        TerraformOutput.for(
-            name: 'repository_url',
-            source_directory: 'infra/image-repository',
-            work_directory: 'build',
-            backend_config: backend_config)
-      end
-
-      t.credentials = lambda do
-        configuration =
-            configuration
-                .for_overrides(
-                    shared_deployment_identifier: 'default')
-                .for_scope(
-                    role: 'cert-manager-image-repository',
-                    deployment: 'default')
-
-        backend_config = configuration.backend_config
-        region = configuration.region
-
-        authentication_factory = RakeDocker::Authentication::ECR.new do |c|
-          c.region = region
-          c.registry_id = TerraformOutput.for(
-              name: 'registry_id',
-              source_directory: 'infra/image-repository',
-              work_directory: 'build',
-              backend_config: backend_config)
-        end
-
-        authentication_factory.call
-      end
-
-      t.tags = lambda do
-        [version.refresh.to_s, 'latest']
-      end
-    end
-
-    task :publish => [
-        'cert_manager:image:clean',
-        'cert_manager:image:build',
-        'cert_manager:image:tag',
-        'cert_manager:image:push'
-    ]
-  end
-
   namespace :task do
     RakeTerraform.define_command_tasks do |t|
       t.argument_names = [
@@ -448,13 +357,12 @@ namespace :cert_manager do
                 .for_scope(role: 'cert-manager-task')
                 .specific_deployment_identifier
 
-        nxt_node_config = YAML.load_file(
-            'config/secrets/nxt/%s.yaml' % deployment)
+        ardor_node_config = YAML.load_file(
+            'config/secrets/ardor/%s.yaml' % deployment)
 
         configuration
             .for_overrides(args.to_hash.merge(
-                'version_number' => version.refresh.to_s,
-                'key_store_password' => nxt_node_config['key_store_password']))
+                'key_store_password' => ardor_node_config['key_store_password']))
             .for_scope(
                 role: 'cert-manager-task',
                 deployment: deployment)
@@ -462,14 +370,6 @@ namespace :cert_manager do
       end
     end
   end
-end
-
-namespace :images do
-  task :publish => [
-      'version:bump',
-      'nxt:image:publish',
-      'cert_manager:image:publish'
-  ]
 end
 
 def sh_in_virtualenv command, argument_string

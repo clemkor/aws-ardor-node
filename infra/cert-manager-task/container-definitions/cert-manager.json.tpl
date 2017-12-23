@@ -11,7 +11,7 @@
     ],
     "mountPoints": [
       {
-        "sourceVolume": "nxt-certs",
+        "sourceVolume": "ardor-certs",
         "containerPath": "/opt/cert-manager/certs"
       }
     ],

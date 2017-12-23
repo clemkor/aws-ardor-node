@@ -8,7 +8,7 @@ data "template_file" "image" {
 }
 
 data "template_file" "task_container_definitions" {
-  template = "${file("${path.root}/container-definitions/nxt.json.tpl")}"
+  template = "${file("${path.root}/container-definitions/ardor.json.tpl")}"
 
   vars {
     aws_s3_configuration_object = "${data.template_file.env_url.rendered}"
@@ -41,12 +41,12 @@ module "service" {
 
   service_volumes = [
     {
-      name = "nxt-data"
-      host_path = "/opt/nxt/nxt_db"
+      name = "ardor-data"
+      host_path = "/opt/ardor/nxt_db"
     },
     {
-      name = "nxt-certs"
-      host_path = "/opt/nxt/nxt_certs"
+      name = "ardor-certs"
+      host_path = "/opt/ardor/nxt_certs"
     }
   ]
 

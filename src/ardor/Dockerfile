@@ -1,6 +1,6 @@
 FROM openjdk:8-jre
 
-ENV ARDOR_VERSION="2.0.7e"
+ENV ARDOR_VERSION="2.0.8e"
 ENV ARDOR_SIGNING_KEY_ID="0xc654d7fcff18fd55"
 
 # Install prerequisites

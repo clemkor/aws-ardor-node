@@ -79,12 +79,12 @@ nxt.communicationLogging=${ARDOR_COMMUNICATION_LOGGING}
 
 #### DATABASE ####
 nxt.dburl=${ARDOR_DB_URL}
-nxt.testdburl=${ARDOR_TEST_DB_URL}
-nxt.dbtype=${ARDOR_DB_TYPE}
-nxt.testdbtype=${ARDOR_TEST_DB_TYPE}
-nxt.dbdir=${ARDOR_DB_DIR}
-nxt.testdbdir=${ARDOR_TEST_DB_DIR}
-nxt.dbparams=${ARDOR_DB_PARAMS}
+nxt.testDbUrl=${ARDOR_TEST_DB_URL}
+nxt.dbType=${ARDOR_DB_TYPE}
+nxt.testDbType=${ARDOR_TEST_DB_TYPE}
+nxt.dbDir=${ARDOR_DB_DIR}
+nxt.testDbDir=${ARDOR_TEST_DB_DIR}
+nxt.dbParams=${ARDOR_DB_PARAMS}
 nxt.testDbParams=${ARDOR_TEST_DB_PARAMS}
 nxt.dbUsername=${ARDOR_DB_USERNAME}
 nxt.testDbUsername=${ARDOR_TEST_DB_USERNAME}

@@ -1,6 +1,6 @@
 FROM openjdk:8-jre
 
-ENV ARDOR_VERSION="2.0.8e"
+ENV ARDOR_VERSION="2.0.14"
 ENV ARDOR_SIGNING_KEY_ID="0xc654d7fcff18fd55"
 
 # Install prerequisites
@@ -37,7 +37,7 @@ ADD ardor-default.env /opt/ardor/conf/ardor-default.env
 RUN ["chmod", "+x", "/opt/ardor/ardor.sh"]
 
 # Expose default ports
-EXPOSE 7874 7875 7876 443 27874 26876 26877
+EXPOSE 27874 27876
 
 # Run startup script by default
 CMD ["/opt/ardor/ardor.sh"]

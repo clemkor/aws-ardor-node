@@ -18,8 +18,31 @@ data "template_file" "task_container_definitions" {
   }
 }
 
+resource "aws_security_group_rule" "peer_server_port" {
+  security_group_id = "${data.terraform_remote_state.cluster.security_group_id}"
+
+  type = "ingress"
+
+  from_port = "${var.peer_server_port}"
+  to_port = "${var.peer_server_port}"
+  protocol = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "api_server_port" {
+  security_group_id = "${data.terraform_remote_state.cluster.security_group_id}"
+
+  type = "ingress"
+
+  from_port = "${var.api_server_port}"
+  to_port = "${var.api_server_port}"
+  protocol = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
 module "service" {
-  source = "github.com/infrablocks/terraform-aws-ecs-service?ref=0.1.9//src"
+  source = "infrablocks/ecs-service/aws"
+  version = "0.1.12"
 
   region = "${var.region}"
   vpc_id = "${data.terraform_remote_state.network.vpc_id}"
@@ -37,7 +60,7 @@ module "service" {
   service_deployment_maximum_percent = "${var.deployment_maximum_percent}"
   service_deployment_minimum_healthy_percent = "${var.deployment_minimum_healthy_percent}"
 
-  service_elb_name = "${aws_elb.load_balancer.id}"
+  attach_to_load_balancer= "no"
 
   service_volumes = [
     {
